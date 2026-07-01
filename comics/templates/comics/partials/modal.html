@@ -1,0 +1,43 @@
+{% load static %}
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+    <div class="modal" id="modal">
+        <button class="modal-close" onclick="closeModalDirect()">&times;</button>
+
+        <img class="modal-cover" id="modalCover" src="" alt="" />
+
+        <div class="modal-body">
+            <div class="modal-issue-num" id="modalNum"></div>
+            <div class="modal-title" id="modalTitle"></div>
+
+            <div class="modal-meta">
+                <span>Cover date:</span>
+                <span id="modalDate"></span>
+            </div>
+
+            <div id="modalTiein"></div>
+
+            <div class="modal-arcs" id="modalArcsWrap">
+                <div class="modal-arcs-label">Story Arcs</div>
+                <div id="modalArcs"></div>
+            </div>
+
+            <div class="modal-actions">
+                <button
+                    class="modal-read-btn"
+                    id="modalReadBtn"
+                    onclick="toggleRead()"
+                >
+                </button>
+
+                <a class="modal-link" id="modalLink" href="" target="_blank">
+                    View on Comic Vine &rarr;
+                </a>
+
+                <a class="modal-link download-link" id="modalDownloadLink" href="" target="_blank">
+                    &#8681; Find on GetComics
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

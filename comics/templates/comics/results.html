@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Results for {{ query }}</title>
+    <link rel="stylesheet" href="{% static 'comics/style.css' %}">
+</head>
+<body>
+
+<nav>
+    <a href="/" class="nav-logo">Comic-Vine</a>
+</nav>
+
+<div class="container">
+    <a href="/" class="back-link">&larr; Back</a>
+    <h1>Results for "{{ query }}"</h1>
+
+    {% if volumes %}
+        <ul class="volume-list" style="margin-top: 24px;">
+            {% for volume in volumes %}
+                <a href="/timeline/{{ volume.id }}/" class="volume-item">
+                    {% if volume.image.small_url %}
+                        <img src="{{ volume.image.small_url }}" alt="{{ volume.name }}" />
+                    {% endif %}
+                    <div class="volume-item-info">
+                        <div class="volume-item-title">{{ volume.name }}</div>
+                        <div class="volume-item-meta">
+                            {{ volume.start_year }}
+                            {% if volume.publisher %}&mdash; {{ volume.publisher.name }}{% endif %}
+                            &mdash; {{ volume.count_of_issues }} issues
+                        </div>
+                        {% if volume.deck %}
+                            <div class="volume-item-meta" style="margin-top: 4px;">{{ volume.deck }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="volume-item-arrow">&rsaquo;</div>
+                </a>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="empty-state">No results found for "{{ query }}".</p>
+    {% endif %}
+</div>
+
+</body>
+</html>

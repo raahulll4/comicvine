@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Comic Timeline</title>
+    <link rel="stylesheet" href="{% static 'comics/style.css' %}">
+</head>
+<body>
+
+<nav>
+    <a href="/" class="nav-logo">Comic-Vine</a>
+</nav>
+
+<div class="container">
+    <h1>Search</h1>
+
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <form class="search-form" action="/results/" method="get">
+        <input type="text" name="q" placeholder="Search for a volume e.g. Civil War" />
+        <button type="submit">Search</button>
+    </form>
+
+    <hr class="divider" />
+
+    <h2>Currently Reading</h2>
+
+    {% if currently_reading %}
+        <ul class="reading-list">
+            {% for item in currently_reading %}
+                {% with pct=item.read_count|floatformat:0 %}
+                <a href="/timeline/{{ item.volume.id }}/" class="reading-item">
+                    {% if item.volume.image.small_url %}
+                        <img src="{{ item.volume.image.small_url }}" alt="{{ item.volume.name }}" />
+                    {% endif %}
+                    <div class="reading-item-info">
+                        <div class="reading-item-title">{{ item.volume.name }}</div>
+                        <div class="reading-item-meta">{{ item.volume.start_year }} &mdash; {{ item.volume.publisher.name }}</div>
+                    </div>
+                    <div class="progress-bar-wrap">
+                        <div class="progress-label">{{ item.read_count }} / {{ item.total }} read</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {% widthratio item.read_count item.total 100 %}%"></div>
+                        </div>
+                    </div>
+                </a>
+                {% endwith %}
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="empty-state">Nothing tracked yet. Search for a volume and tick off issues as you read them.</p>
+    {% endif %}
+</div>
+
+</body>
+</html>

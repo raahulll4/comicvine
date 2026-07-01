@@ -1,0 +1,125 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ volume.name }}</title>
+    <link rel="stylesheet" href="{% static 'comics/style.css' %}">
+</head>
+<body>
+
+<nav>
+    <a href="/" class="nav-logo">Comic-Vine</a>
+</nav>
+
+<div class="container">
+    <a href="/" class="back-link">&larr; Back to home</a>
+
+    <div class="volume-header">
+        {% if volume.image.medium_url %}
+            <img src="{{ volume.image.medium_url }}" alt="{{ volume.name }}" />
+        {% endif %}
+        <div>
+            <div class="volume-header-title">{{ volume.name }}</div>
+            <div class="volume-header-meta">
+                {{ volume.start_year }} &mdash; {{ volume.publisher.name }}
+            </div>
+            {% if volume.deck %}
+                <div class="volume-header-meta" style="margin-top: 8px;">{{ volume.deck }}</div>
+            {% endif %}
+            <div class="volume-stats">
+                <div>
+                    <div class="stat-val">{{ volume.count_of_issues }}</div>
+                    <div class="stat-label">Issues</div>
+                </div>
+                <div>
+                    <div class="stat-val">{{ read_issues|length }}</div>
+                    <div class="stat-label">Read</div>
+                </div>
+                <div>
+                    <div class="stat-val">
+                        {% if volume.count_of_issues %}
+                            {% widthratio read_issues|length volume.count_of_issues 100 %}%
+                        {% else %}
+                            0%
+                        {% endif %}
+                    </div>
+                    <div class="stat-label">Complete</div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <a href="https://getcomics.org/?s={{ volume.name|urlencode }}" target="_blank" class="modal-link download-link">
+                &#8681; Find on GetComics
+            </a>
+        </div>
+    </div>
+
+    {% if issues %}
+        <div class="issue-grid">
+            {% for issue in issues %}
+                {% with issue_id_str=issue.id|stringformat:"s" %}
+                <div class="issue-card">
+                    <div
+                        class="issue-card-img-wrap"
+                        onclick="openModal({
+                            id: '{{ issue.id }}',
+                            num: '{{ issue.issue_number }}',
+                            name: '{{ issue.name|escapejs }}',
+                            date: '{{ issue.cover_date }}',
+                            image: '{{ issue.image.medium_url }}',
+                            site_url: '{{ issue.site_detail_url }}',
+                            volume_name: '{{ volume.name|escapejs }}',
+                            arcs: [{% for arc in issue.story_arc_credits %}'{{ arc.name|escapejs }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+                            is_tiein: {{ issue.story_arc_credits|length }} > 1,
+                            is_read: {% if issue_id_str in read_issues %}true{% else %}false{% endif %}
+                        })"
+                    >
+                        {% if issue.image.small_url %}
+                            <img
+                                src="{{ issue.image.small_url }}"
+                                alt="{{ issue.name }}"
+                                class="{% if issue_id_str in read_issues %}read{% endif %}"
+                                id="card-img-{{ issue.id }}"
+                            />
+                        {% endif %}
+
+                        {% if issue_id_str in read_issues %}
+                            <div class="read-badge" id="card-read-badge-{{ issue.id }}">&#10003; Read</div>
+                        {% else %}
+                            <div class="read-badge" id="card-read-badge-{{ issue.id }}" style="display:none;">&#10003; Read</div>
+                        {% endif %}
+
+                        {% if issue.story_arc_credits and issue.story_arc_credits|length > 1 %}
+                            <div class="tiein-badge">Tie-in</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="issue-card-meta">
+                        <div class="issue-num">#{{ issue.issue_number }}</div>
+                        {% if issue.name and issue.name != '[untitled]' %}
+                            <div class="issue-name">{{ issue.name }}</div>
+                        {% endif %}
+                        <div class="issue-date">{{ issue.cover_date }}</div>
+                    </div>
+                    <form
+                        class="read-form"
+                        id="form-{{ issue.id }}"
+                        method="post"
+                        action="/timeline/{{ volume_id }}/toggle/{{ issue.id }}/"
+                    >
+                        {% csrf_token %}
+                    </form>
+                </div>
+                {% endwith %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="empty-state">No issues found.</p>
+    {% endif %}
+</div>
+
+{% include 'comics/partials/modal.html' %}
+<script src="{% static 'comics/timeline.js' %}"></script>
+
+</body>
+</html>
