@@ -11,11 +11,6 @@ A Django web app for browsing and tracking your comic book reading progress usin
 - Tie-in issue detection
 - Links to GetComics for both volumes and individual issues
 
-## Requirements
-
-- Python 3.10+
-- A Comic Vine API key — get one free at [comicvine.gamespot.com/api](https://comicvine.gamespot.com/api)
-
 ## Setup
 
 1. Clone the repo:
